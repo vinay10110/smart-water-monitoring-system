@@ -65,6 +65,26 @@ The model's performance is evaluated using:
 - Root Mean Square Error (RMSE)
 - Custom scoring metric (100 - RMSE)
 
+### Results
+We tested multiple modeling approaches with the following results:
+
+1. Initial Random Forest Model:
+   - Used basic feature engineering
+   - Handled missing values with simple imputation
+
+2. PyCaret AutoML Comparison:
+   - Tested multiple algorithms
+   - Applied advanced preprocessing
+   - Selected best performing model based on RMSE
+
+3. Final LightGBM Model (Selected Solution):
+   - Achieved best performance
+   - RMSE Score: 11.59
+   - Custom Score: 88.41
+   - Features complete preprocessing pipeline
+   - Robust to missing values
+   - Generated predictions saved in 'final.csv'
+
 ## Usage
 1. Ensure all required libraries are installed
 2. Run the notebook cells sequentially
