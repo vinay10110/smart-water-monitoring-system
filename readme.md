@@ -1,97 +1,114 @@
-# Smart Water System Consumption Prediction
+# Smart Water Monitoring System — Consumption Prediction
 
-## Project Overview
-This project implements a machine learning model to predict water consumption based on various household and environmental factors. The model uses features like apartment type, temperature, humidity, income level, and appliance usage to make accurate predictions of water consumption patterns.
+A lightweight machine learning project to predict residential water consumption using tabular features (residents, apartment type, weather, pricing, income level, amenities, appliance usage, etc.). This repository includes training data, a trained model artifact, evaluation plots, and a sample submission.
 
-## Dataset
-The project uses two main datasets:
-- `train.csv`: Used for training and validating the model
-- `test.csv`: Used for making predictions on new data
+## Project Structure
 
-### Features
-- Timestamp
-- Residents
-- Apartment_Type
-- Temperature
-- Humidity
-- Water_Price
-- Period_Consumption_Index
-- Income_Level
-- Guests
-- Amenities
-- Appliance_Usage
-- Water_Consumption (target variable)
+- `dataset/`
+  - `train.csv` — Training data with target `Water_Consumption`
+  - `test.csv` — Test data without target
+- `results/`
+  - `model/SWS.pkl` — Saved trained model (pickle)
+  - `plots/` — Evaluation & diagnostics
+    - `learning_curve.png`
+    - `features_imp.png`
+    - `residuals.png`
+  - `submission.csv` — Example predictions for the test set
+- `SWS.ipynb` — Jupyter notebook for EDA, training, evaluation, and inference
+- `requirements.txt` — Project dependencies
+- `logs.log` — Training/experiment logs
 
-## Model Development
-The notebook (`swm.ipynb`) implements several machine learning approaches:
-1. Random Forest Regressor
-2. PyCaret AutoML comparison
-3. LightGBM Regressor (final selected model)
+## Visualizations
 
-## Key Steps in the Notebook
-1. Data Loading and Initial Exploration
-2. Missing Value Treatment
-   - Categorical variables filled with 'Missing'
-   - Numerical variables filled with median values
-3. Feature Engineering
-   - Label encoding for categorical variables
-   - Data type conversions
-4. Model Training and Evaluation
-   - Multiple models compared using PyCaret
-   - Final LightGBM model selected based on RMSE
-5. Model Persistence
-   - Best model saved as 'model.pkl'
-6. Prediction Generation
-   - Predictions made on test dataset
-   - Results saved in 'predictions.csv' and 'final.csv'
+These plots summarize the model’s training behavior and performance:
 
-## Files Generated
-- `model.pkl`: Serialized machine learning model
-- `predictions.csv`: Raw predictions from the model
-- `final.csv`: Final predictions with timestamps
-- `logs.log`: Execution logs
+- Learning Curve
 
-## Requirements
-The project requires the following Python libraries:
-- pandas
-- numpy
-- scikit-learn
-- pycaret
-- lightgbm
-- joblib
+  ![Learning Curve](results/plots/learning_curve.png)
 
-## Model Performance
-The model's performance is evaluated using:
-- Root Mean Square Error (RMSE)
-- Custom scoring metric (100 - RMSE)
+- Feature Importance
 
-### Results
-We tested multiple modeling approaches with the following results:
+  ![Feature Importance](results/plots/features_imp.png)
 
-1. Initial Random Forest Model:
-   - Used basic feature engineering
-   - Handled missing values with simple imputation
+- Residuals
 
-2. PyCaret AutoML Comparison:
-   - Tested multiple algorithms
-   - Applied advanced preprocessing
-   - Selected best performing model based on RMSE
+  ![Residuals](results/plots/residuals.png)
 
-3. Final LightGBM Model (Selected Solution):
-   - Achieved best performance
-   - RMSE Score: 11.59
-   - Custom Score: 88.41
-   - Features complete preprocessing pipeline
-   - Robust to missing values
-   - Generated predictions saved in 'final.csv'
+## Setup
 
-## Usage
-1. Ensure all required libraries are installed
-2. Run the notebook cells sequentially
-3. The model will automatically process the test data and generate predictions
-4. Final predictions can be found in 'final.csv'
+- Python 3.x
+- Recommended: a virtual environment
+
+```bash
+# Create and activate a virtual environment (examples)
+# Windows (PowerShell)
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+
+# Install dependencies
+pip install -r requirements.txt
+```
+
+## Data
+
+- Train columns (sample):
+  - `Timestamp, Residents, Apartment_Type, Temperature, Humidity, Water_Price, Period_Consumption_Index, Income_Level, Guests, Amenities, Appliance_Usage, Water_Consumption`
+- Test columns are identical, excluding `Water_Consumption`.
+
+## Reproduce Training / Evaluation
+
+Open the notebook and run cells end-to-end:
+
+```bash
+# (Optional) install Jupyter if needed
+pip install jupyter
+
+# Launch Jupyter
+jupyter notebook SWS.ipynb
+```
+
+The notebook will:
+- Load data from `dataset/`
+- Train a regression model (e.g., scikit-learn / PyCaret pipeline)
+- Generate evaluation plots to `results/plots/`
+- Save the trained model to `results/model/SWS.pkl`
+- Optionally create predictions (e.g., `results/submission.csv`)
+
+## Inference (Load the Saved Model)
+
+Below is a minimal example of loading the model and scoring new data. Adjust feature names/types to match your preprocessing and training pipeline.
+
+```python
+import pickle
+import pandas as pd
+
+# Load trained model
+with open("results/model/SWS.pkl", "rb") as f:
+    model = pickle.load(f)
+
+# Example: score the provided test set
+X_test = pd.read_csv("dataset/test.csv")
+# If your pipeline expects any preprocessing, ensure it is applied here
+# (e.g., datetime parsing, categorical encoding, imputation) or that the
+# saved model already includes those steps in a pipeline.
+
+preds = model.predict(X_test)
+
+# Save predictions with the required format
+out = pd.DataFrame({
+    "Timestamp": X_test["Timestamp"],
+    "Water_consumption": preds
+})
+out.to_csv("results/submission.csv", index=False)
+print("Saved predictions to results/submission.csv")
+```
 
 ## Notes
-- The model handles missing values automatically
-- Categorical variables are encoded using Label Encoding
-- The system is designed to work with both complete and incomplete data entries
+
+- Ensure your local environment has compatible versions for libraries in `requirements.txt`.
+- If the model was saved using a higher-level framework (e.g., PyCaret), make sure the same package is installed to load the pickle successfully.
+- The dataset may contain missing or categorical values; your preprocessing must mirror what was used during training.
+
+## License
+
+Specify a license here if applicable.
