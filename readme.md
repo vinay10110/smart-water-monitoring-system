@@ -16,7 +16,6 @@ A lightweight machine learning project to predict residential water consumption 
   - `submission.csv` — Example predictions for the test set
 - `SWS.ipynb` — Jupyter notebook for EDA, training, evaluation, and inference
 - `requirements.txt` — Project dependencies
-- `logs.log` — Training/experiment logs
 
 ## Visualizations
 
@@ -73,35 +72,6 @@ The notebook will:
 - Generate evaluation plots to `results/plots/`
 - Save the trained model to `results/model/SWS.pkl`
 - Optionally create predictions (e.g., `results/submission.csv`)
-
-## Inference (Load the Saved Model)
-
-Below is a minimal example of loading the model and scoring new data. Adjust feature names/types to match your preprocessing and training pipeline.
-
-```python
-import pickle
-import pandas as pd
-
-# Load trained model
-with open("results/model/SWS.pkl", "rb") as f:
-    model = pickle.load(f)
-
-# Example: score the provided test set
-X_test = pd.read_csv("dataset/test.csv")
-# If your pipeline expects any preprocessing, ensure it is applied here
-# (e.g., datetime parsing, categorical encoding, imputation) or that the
-# saved model already includes those steps in a pipeline.
-
-preds = model.predict(X_test)
-
-# Save predictions with the required format
-out = pd.DataFrame({
-    "Timestamp": X_test["Timestamp"],
-    "Water_consumption": preds
-})
-out.to_csv("results/submission.csv", index=False)
-print("Saved predictions to results/submission.csv")
-```
 
 ## Notes
 
